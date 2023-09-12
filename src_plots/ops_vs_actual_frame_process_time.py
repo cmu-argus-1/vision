@@ -75,7 +75,7 @@ for x, y in zip(ops_per_second, actual_frame_process_time):
 plt.legend()
 plt.grid(True)
 # Save the plot with a meaningful name
-plt.savefig("Ops_vs_Actual_Frame_Process_Time.png")
-
+image_filename = f"Ops_vs_Actual_Frame_Process_Time_Pixel_{pixel_size:.2e}_OpsPerFrame_{ops_per_frame:.2e}.png"
+plt.savefig(image_filename)
 # Show the plot
-plt.show()
+# plt.show()
