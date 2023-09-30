@@ -1,0 +1,11 @@
+# README
+
+## Data Selection for different conditions, e.g. cloud coverage & time
+
+1. **Random Selection**: Start by randomly picking a subset of images from your dataset.
+
+2. **Stratify by Cloud Cover**: Divide the selected images into groups based on cloud cover percentages (e.g., 0-10%, 11-20%).
+
+3. **Proportional Sampling**: Within each cloud cover group, sample images proportionally to match the original cloud cover distribution.
+
+4. **Verification & Testing**: Start with the proposed selection of the dataset, use validation data to update the selection
