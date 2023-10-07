@@ -1,0 +1,12 @@
+flags: 
+  train_flag : True
+  live_plot_flag : True
+  save_plot_flag : True
+paths: 
+  train_path : "/home/jash/spacecraft/vision/level_1_cnn/data/train"
+  model_save_path : "/home/jash/spacecraft/vision/level_1_cnn/models/model.pth"
+  model_load_path : "/home/jash/spacecraft/vision/level_1_cnn/models/model.pth"
+  test_image_path : "/home/jash/spacecraft/vision/level_1_cnn/data/test"
+  save_plot_path : "/home/jash/spacecraft/vision/level_1_cnn/results/loss_vs_epoch.png"
+
+epochs : 10
