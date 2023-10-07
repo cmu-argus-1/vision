@@ -15,14 +15,14 @@ ops_per_frame = float(sys.argv[2])
 focal_lengths = [20e-3, 5e-3]  # TODO
 harvested_power = 0.5
 other_power = 5.0
-pixel_count = 640
+pixel_count = 4000
 altitude = 450000
 earth_radius = 6.3781e6
 mass_of_earth = 5.97219e24
 gravitational_constant = 6.6743e-11
 
 # Calculate the x-axis values (ops per second)
-ops_per_second = [1.6685e11 + i * 1.6665e11 for i in range(14)]
+ops_per_second = [1.6685e11*30 + i * 1.6665e11*30 for i in range(14)]
 power_per_second = [1.25 + i * 1.25 for i in range(14)]
 
 # Calculate the y-axis values (actual frame process time)
