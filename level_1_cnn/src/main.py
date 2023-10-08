@@ -18,7 +18,7 @@ if __name__ == "__main__":
     save_plot_flag = config['flags']['save_plot_flag']
     save_plot_path = config['paths']['save_plot_path']
     train_path = config['paths']['train_path']
-    test_path = config['paths']['test_image_path']
+    test_path = config['paths']['test_path']
     
     classifier = ImageClassifier(train_path, test_path, live_plot_flag, save_plot_flag, save_plot_path)
     if train_flag:
