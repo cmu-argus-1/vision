@@ -1,0 +1,15 @@
+flags: 
+  train_flag : True
+  live_plot_flag : True
+  save_plot_flag : True
+paths: 
+  train_path : "/mnt/c/users/17347/Desktop/18873/vision/level_2_cnn/data/train"
+  model_save_path : "/mnt/c/users/17347/Desktop/18873/vision/level_2_cnn/models/model.pth"
+  model_load_path : "/mnt/c/users/17347/Desktop/18873/vision/level_2_cnn/models/model.pth"
+  test_path : "/mnt/c/users/17347/Desktop/18873/vision/level_2_cnn/data/test"
+  save_plot_path : "/mnt/c/users/17347/Desktop/18873/vision/level_2_cnn/results/loss_plot.png"
+resize_shape: 
+  height : 224
+  width : 224
+learning_rate: 0.01
+epochs : 10
