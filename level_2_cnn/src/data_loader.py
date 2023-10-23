@@ -10,7 +10,9 @@ class CustomImageDataset(Dataset):
         self.classes = os.listdir(root_dir)
         self.files = []
         self.labels = []
+        self.regions = []
         for class_i in self.classes:
+            self.regions.append(int(str(class_i).split('_')[0]))
             curr_class_path = os.path.join(root_dir, class_i)
             for f in os.listdir(curr_class_path):
                 f_path = os.path.join(curr_class_path, f)
@@ -27,5 +29,5 @@ class CustomImageDataset(Dataset):
         return len(self.files)
 
     def __getitem__(self, idx):
-        return self.files[idx], self.labels[idx]
+        return self.files[idx], self.regions[idx], self.labels[idx]
 

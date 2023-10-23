@@ -34,17 +34,34 @@ class ImageRegressor:
 
     def _initialize_model(self):
         self.model = resnet18(weights=ResNet18_Weights.DEFAULT) 
-        self.model.fc = nn.Linear(self.model.fc.in_features, len(self.train_loader.dataset.labels[0]))
+        # self.model.fc = nn.Linear(self.model.fc.in_features, len(self.train_loader.dataset.labels[0]))
+        self.fc_layers = [
+            nn.Linear(self.model.fc.in_features + 1, 512),  # Add region to the input features
+            nn.ReLU(),
+            nn.Linear(512, 256),
+            nn.ReLU(),
+            nn.Linear(256, len(self.train_loader.dataset.labels[0]))  # Output layer
+        ]
+
+        # Create a new custom model with the modified fc layers
+        # self.model.fc = nn.Sequential(*self.fc_layers)
+        self.model.fc = nn.Identity()
+        self.fc_layers = nn.Sequential(*self.fc_layers).to(self.device)
         self.model = self.model.to(self.device)
 
     def train(self):
         criterion = nn.MSELoss()    
-        optimizer = optim.Adam(self.model.parameters(), lr=self.learning_rate)
+        # optimizer = optim.Adam(self.model.parameters(), lr=self.learning_rate)
+        optimizer = optim.Adam(list(self.model.parameters()) + list(self.fc_layers.parameters()), lr=self.learning_rate)
         for epoch in range(self.epochs):
-            for batch_idx, (data, targets) in enumerate(self.train_loader):
+            for batch_idx, (data,region,targets) in enumerate(self.train_loader):
                 data = data.to(self.device)
+                region = region.to(self.device)
                 targets = targets.to(self.device)
-                scores = self.model(data)
+                cnn_output = self.model(data)
+                region = region.unsqueeze(1)
+                fc_input = torch.cat((cnn_output, region), dim=1)
+                scores = self.fc_layers(fc_input)
                 loss = criterion(scores, targets.float())   
                 optimizer.zero_grad()
                 loss.backward()
@@ -56,10 +73,21 @@ class ImageRegressor:
                 self.plotter.save_plot(self.save_plot_path)
 
     def save_model(self, path='model.pth'):
-        torch.save(self.model.state_dict(), path)
+        # torch.save(self.model.state_dict(), path)
+        checkpoint = {
+            'model_state_dict': self.model.state_dict(),
+            'fc_layers_state_dict': self.fc_layers.state_dict(),
+        }
+        torch.save(checkpoint, path)
 
     def load_model(self, path='model.pth'):
-        self.model.load_state_dict(torch.load(path))
+        # self.model.load_state_dict(torch.load(path))
+        # self.model.eval()
+        heckpoint = torch.load(path)
+        self.model.load_state_dict(checkpoint['model_state_dict'])
+        self.fc_layers.load_state_dict(checkpoint['fc_layers_state_dict'])
+        self.model.to(self.device)
+        self.fc_layers.to(self.device)
         self.model.eval()
 
     def evaluate(self):
@@ -69,13 +97,21 @@ class ImageRegressor:
 
         with torch.no_grad():
             for data in self.test_loader:
-                images, targets = data
-                images, targets = images.to(self.device), targets.to(self.device)
-                outputs = self.model(images)
+                image, region, target = data
+                image, region, target = image.to(self.device),region.to(self.device),  target.to(self.device)
+                # outputs = self.model(images)
+                # Forward pass through the ResNet
+                cnn_output = self.model(image)
+                region = region.unsqueeze(1)
+                # Combine the CNN output and region
+                combined_input = torch.cat((cnn_output, region), dim=1)
+                
+                # Forward pass through the custom fc_layers
+                outputs = self.fc_layers(combined_input)
                 # print(outputs, targets)
-                batch_loss = mse_loss(outputs, targets.float())
+                batch_loss = mse_loss(outputs, target.float())
                 total_mse_loss += batch_loss.item()
-                total_samples += len(targets)
+                total_samples += len(target)
 
         mean_mse_loss = total_mse_loss / total_samples
         print(f'Loss of the network on the test images: {mean_mse_loss:.4f}')
