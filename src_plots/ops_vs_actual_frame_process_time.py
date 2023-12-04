@@ -12,11 +12,11 @@ pixel_size = float(sys.argv[1])
 ops_per_frame = float(sys.argv[2])
 
 # Constants
-focal_lengths = [20e-3, 5e-3]  # TODO
-harvested_power = 0.5
-other_power = 5.0
-pixel_count = 640
-altitude = 450000
+focal_lengths = [16e-3]  # TODO
+harvested_power = 0.75
+other_power = 11.3265
+pixel_count = 3120
+altitude = 550000
 earth_radius = 6.3781e6
 mass_of_earth = 5.97219e24
 gravitational_constant = 6.6743e-11
@@ -55,24 +55,24 @@ for focal_length in focal_lengths:
 # Create the plot
 plt.figure(figsize=(10, 6))
 plt.plot(ops_per_second, actual_frame_process_time, marker='o', linestyle='-')
-plt.xlabel('Ops per Second (ops/sec)')
-plt.ylabel('Actual Frame Process Time (s)')
-plt.title(f'Ops per Second vs. Actual Frame Process Time (Pixel Size: {pixel_size:.2e} m, Ops per Frame: {ops_per_frame:.2e})')
+plt.xlabel('Ops per Second (ops/sec)', fontsize=18)
+plt.ylabel('Actual Frame Process Time (s)', fontsize=18)
+plt.title(f'Ops per Second vs. Actual Frame Process Time \n(Pixel Size: {pixel_size:.2e} m, Ops per Frame: {ops_per_frame:.2e})', fontsize=20)
 
 # Add horizontal deadline lines
 for i, deadline in enumerate(deadlines):
-    plt.axhline(y=deadline, color=f'C{i}', linestyle='--', label=f'Ddl with focal length {focal_lengths[i]:.3f}m: {deadline:.2f} s')
+    plt.axhline(y=deadline, color=f'C{i+1}', linestyle='--', label=f'Ddl with focal length {focal_lengths[i]:.3f}m: {deadline:.2f} s')
 
 # Add vertical lines at intersection points
 for i, intersection in enumerate(intersection_points):
     if intersection is not None:
-        plt.axvline(x=intersection, color=f'C{i}', linestyle=':', label=f'Intersection {i+1}: {intersection:.4e} ops/sec')
+        plt.axvline(x=intersection, color=f'C{i+2}', linestyle=':', label=f'Intersection {i+1}: {intersection:.2e} ops/sec')
 
 # Add text labels for each data point
 for x, y in zip(ops_per_second, actual_frame_process_time):
-    plt.annotate(f'{y:.2f}', (x, y), textcoords="offset points", xytext=(0, 10), ha='center')
+    plt.annotate(f'{y:.2f}', (x, y), textcoords="offset points", xytext=(0, 5), ha='center', fontsize=13)
 
-plt.legend()
+plt.legend(fontsize='large')
 plt.grid(True)
 # Save the plot with a meaningful name
 image_filename = f"Ops_vs_Actual_Frame_Process_Time_Pixel_{pixel_size:.2e}_OpsPerFrame_{ops_per_frame:.2e}.png"
