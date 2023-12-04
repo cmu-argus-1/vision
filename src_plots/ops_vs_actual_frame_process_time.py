@@ -12,23 +12,34 @@ pixel_size = float(sys.argv[1])
 ops_per_frame = float(sys.argv[2])
 
 # Constants
-focal_lengths = [16e-3]  # TODO
-harvested_power = 0.75
-other_power = 11.3265
+focal_lengths = [16e-3] 
+harvested_power = 4.46
+other_power = (15.4371 -7)
 pixel_count = 3120
-altitude = 550000
+altitude = 525000
 earth_radius = 6.3781e6
 mass_of_earth = 5.97219e24
 gravitational_constant = 6.6743e-11
 
 # Calculate the x-axis values (ops per second)
-ops_per_second = [1.6685e11 + i * 1.6665e11 for i in range(14)]
-power_per_second = [1.25 + i * 1.25 for i in range(14)]
+ops_per_second = [1.6685e11/2 + i * 1.6665e11/2 for i in range(14)]
+power_per_second = [1.25/2 + i * 1.25/2 for i in range(14)]
 
 # Calculate the y-axis values (actual frame process time)
 ideal_frame_process_time = [ops_per_frame / ops for ops in ops_per_second]
 power_cycle_duty_cycle = [min(1, harvested_power / (other_power + pw)) for pw in power_per_second]
 actual_frame_process_time = [ift / pcd for ift, pcd in zip(ideal_frame_process_time, power_cycle_duty_cycle)]
+
+# # the model is 0.39 GFLOPS
+# model_flops = 0.39e9
+# # jetson nano ops per second is 275 trillion
+# jetson_ops_per_second = 275e12
+# model_frame_process_time = model_flops / jetson_ops_per_second
+# # calcualte the actual frame process time
+# model_power_cycle_duty_cycle = min(1, harvested_power / (other_power + 5))
+# model_actual_frame_process_time = model_frame_process_time / model_power_cycle_duty_cycle
+# # print the actual frame process time
+# print(f"Model Actual Frame Process Time: {model_actual_frame_process_time*1000:.4f} ms")
 
 # Calculate the deadlines and intersection points
 deadlines = []
